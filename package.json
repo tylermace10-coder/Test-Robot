@@ -1,0 +1,104 @@
+{
+  "name": "frc-auto-visualizer",
+  "displayName": "FRC Auto Visualizer",
+  "description": "PathPlanner 2026 field and autonomous previews beside Java code.",
+  "version": "0.1.0",
+  "publisher": "test-robot",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "compile": "tsc -p .",
+    "vscode:prepublish": "npm run compile",
+    "test": "npm run compile && node --test test/*.test.cjs",
+    "package": "vsce package --allow-missing-repository",
+    "test:browser": "npm run compile && node test/browser.cjs"
+  },
+  "dependencies": {
+    "@msgpack/msgpack": "^3.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.95.0",
+    "@types/ws": "^8.5.0",
+    "@vscode/vsce": "^3.2.0",
+    "playwright-core": "^1.64.0",
+    "typescript": "^5.7.0"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "frcVisualizer",
+          "title": "FRC Auto Visualizer",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "frcVisualizer": [
+        {
+          "id": "frcVisualizer.field",
+          "name": "FRC Auto Visualizer",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "frcVisualizer.open",
+        "title": "FRC Visualizer: Open Full Field Editor"
+      },
+      {
+        "command": "frcVisualizer.reference",
+        "title": "FRC Visualizer: Open Path Reference"
+      },
+      {
+        "command": "frcVisualizer.connect",
+        "title": "FRC Visualizer: Connect NT4 Telemetry"
+      },
+      {
+        "command": "frcVisualizer.disconnect",
+        "title": "FRC Visualizer: Disconnect Telemetry"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "frcVisualizer.reference",
+          "when": "editorLangId == java || resourceExtname == .path || resourceExtname == .auto"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "FRC Visualizer",
+      "properties": {
+        "frcVisualizer.telemetryUrl": {
+          "type": "string",
+          "default": "ws://localhost:5810/nt/frc-visualizer",
+          "description": "NT4 WebSocket URL; connect explicitly using the telemetry command."
+        },
+        "frcVisualizer.actualPoseTopic": {
+          "type": "string",
+          "default": "/FRCVisualizer/actualPose",
+          "description": "double[] [x meters, y meters, heading degrees], always in blue-origin coordinates."
+        },
+        "frcVisualizer.plannedPoseTopic": {
+          "type": "string",
+          "default": "/FRCVisualizer/plannedPose",
+          "description": "double[] [x meters, y meters, heading degrees]."
+        }
+      }
+    }
+  }
+}
